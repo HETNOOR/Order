@@ -25,9 +25,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                let testOrder = Order(
                    screenTitle: "Оформление заказа",
                    promocodes: [
-                       Order.Promocode(title: "HELLO353d", percent: 5, endDate: someDateTime, info: "Первый заказ", active: false),
-                       Order.Promocode(title: "SPRING", percent: 10, endDate: nil, info: "Весенняя акция", active: false),
-                       Order.Promocode(title: "SPRING2", percent: 11, endDate: nil, info: "Весенняя акция", active: false),
+                       Order.Promocode(title: "HELLO35334534535354535345354апвпвапапвапапаваВАППВАПВПВПВПВАПВАПВПВПВАПВПАВПАВппавпвd", percent: 5, endDate: someDateTime, info: "Первый заказ", active: false),
+                       Order.Promocode(title: "SPRING2мсмссмвавававerttretertet43", percent: 10, endDate: nil, info: "Весенняя акция", active: false),
+                       Order.Promocode(title: "SPRING2мсмссмвавававerttretertet", percent: 11, endDate: nil, info: "Весенняя акция", active: false),
                        Order.Promocode(title: "SPRING3", percent: 12, endDate: nil, info: "Весенняя акция", active: false),
                        Order.Promocode(title: "SPRINg4", percent: 14, endDate: nil, info: "Весенняя акция", active: false),
                        Order.Promocode(title: "SPRING5", percent: 16, endDate: nil, info: "Весенняя акция", active: false),

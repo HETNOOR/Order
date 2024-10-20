@@ -21,7 +21,8 @@ class OrderPromocodeCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
+      
+        
         setupUI()
         promocodeSwitch.addTarget(self, action: #selector(switchToggled(_:)), for: .valueChanged)
     }
@@ -41,6 +42,7 @@ class OrderPromocodeCell: UITableViewCell {
 
         // Настройки шрифтов
         promocodeTitleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        promocodeTitleLabel.numberOfLines = 0
         promocodeDiscountLabel.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         promocodeExpiryDateLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         promocodeExpiryDateLabel.textColor = .gray
@@ -52,16 +54,20 @@ class OrderPromocodeCell: UITableViewCell {
         promocodeTitleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.left.equalToSuperview().inset(20)
+            make.right.lessThanOrEqualTo(promocodeDiscountLabel.snp.left).offset(-10)
+            make.width.lessThanOrEqualTo(220) // времменный размер
         }
 
         promocodeDiscountLabel.snp.makeConstraints { make in
             make.left.equalTo(promocodeTitleLabel.snp.right).offset(10)
-            make.centerY.equalTo(promocodeTitleLabel)
+            make.top.equalToSuperview().offset(15)
+            make.right.equalTo(promocodeInfoButton.snp.left).offset(-10)
         }
 
         promocodeInfoButton.snp.makeConstraints { make in
             make.left.equalTo(promocodeDiscountLabel.snp.right).offset(10)
-            make.centerY.equalTo(promocodeTitleLabel)
+            make.top.equalToSuperview().offset(10)
+            make.right.lessThanOrEqualTo(promocodeSwitch.snp.left).offset(-10)
         }
 
         // Констрейнты для второй строки: Срок действия
@@ -75,6 +81,7 @@ class OrderPromocodeCell: UITableViewCell {
             make.top.equalTo(promocodeExpiryDateLabel.snp.bottom).offset(5)
             make.left.equalToSuperview().inset(20)
             make.right.equalToSuperview().inset(80) // чтобы оставить место для свитчера
+            make.bottom.equalToSuperview().offset(-10)
         }
 
         // Констрейнты для переключателя
@@ -103,5 +110,7 @@ class OrderPromocodeCell: UITableViewCell {
 
     @objc func switchToggled(_ sender: UISwitch) {
         switchToggledClosure?(sender.isOn)  // Вызов замыкания с новым состоянием свитчера
+               
+           
     }
 }

@@ -19,9 +19,9 @@ class OrderViewController: UIViewController {
 
         view.backgroundColor = .white
         title = "Оформление заказа"
-
         setupTableView()
         setupUI()
+ 
     }
 
     // UI Setup
@@ -88,7 +88,11 @@ class OrderViewController: UIViewController {
         tableView.separatorStyle = .none
         
         tableView.register(OrderPromocodeCell.self, forCellReuseIdentifier: "OrderPromocodeCell")
-
+        
+      tableView.estimatedRowHeight = 100 // Предполагаемая высота ячейки
+        tableView.rowHeight = UITableView.automaticDimension
+       
+        
         view.addSubview(tableView)
 
         // Констрейнты для растягивания таблицы на весь экран
@@ -188,7 +192,7 @@ class OrderViewController: UIViewController {
     }
 }
 
-// Extension для UITableView Delegate и DataSource
+
 extension OrderViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -241,10 +245,10 @@ extension OrderViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    // Высота для строки
+//     Высота для строки
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return 100 // Промокоды
+            return  UITableView.automaticDimension
         } else {
             return 250 // Футер с итоговой суммой
         }

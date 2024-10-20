@@ -29,7 +29,7 @@ struct Order {
     var screenTitle: String
     var promocodes: [Promocode]
     var products: [Product]
-    var paymentDiscount: Double? // Optional
-    var baseDiscount: Double? // Optional
+    var paymentDiscount: Double?
+    var baseDiscount: Double?
 }
 
