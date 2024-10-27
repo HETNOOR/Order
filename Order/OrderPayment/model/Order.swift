@@ -9,16 +9,14 @@ import Foundation
 
 struct Order {
 
-    struct Promocode: Equatable {
+    struct Promocode {
         let title: String
         let percent: Int
         let endDate: Date?
         let info: String?
         var active: Bool
         
-        static func ==(lhs: Promocode, rhs: Promocode) -> Bool {
-                return lhs.title == rhs.title && lhs.active == rhs.active
-            }
+       
     }
 
     struct Product {
@@ -28,6 +26,7 @@ struct Order {
 
     var screenTitle: String
     var promocodes: [Promocode]
+    var availableForActive: [Promocode]
     var products: [Product]
     var paymentDiscount: Double?
     var baseDiscount: Double?

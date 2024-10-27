@@ -34,6 +34,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                        Order.Promocode(title: "SPRING6", percent: 1, endDate: nil, info: "Весенняя акция", active: false)
                        
                    ],
+                   availableForActive: [
+                       .init(title: "123", percent: 12, endDate: Date(), info: "Секретный промокод", active: true),
+                       .init(title: "10", percent: 10, endDate: Date(), info: "Секретный промокод", active: true),
+                       .init(title: "5", percent: 5, endDate: Date(), info: "Секретный промокод", active: true),
+                       .init(title: "TEST", percent: 999, endDate: Date(), info: "Секретный промокод", active: true),
+                       .init(title: "FO", percent: 1, endDate: Date(), info: "Секретный промокод", active: true),
+                       .init(title: "FA", percent: 2, endDate: Date(), info: "Секретный промокод", active: true),
+                       .init(title: "FU", percent: 3, endDate: Date(), info: "Секретный промокод", active: true)
+                   ],
                    products: [
                        Order.Product(price: 10000, title: "Продукт 1"),
                        Order.Product(price: 15000, title: "Продукт 2")
@@ -42,11 +51,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                    baseDiscount: 0
                )
 
-               let viewModel = OrderViewModel(order: testOrder)
+        let viewModel = OrderViewModel(orderList: testOrder)
 
                // Инициализация контроллера с ViewModel
-               let orderViewController = OrderViewController()
-               orderViewController.viewModel = viewModel
+        let orderViewController = OrderViewController(viewModel: viewModel)
+//               orderViewController.viewModel = viewModel
 
                // Инициализация окна
                window = UIWindow(windowScene: windowScene)
