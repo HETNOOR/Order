@@ -16,51 +16,54 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd"
-        let someDateTime = formatter.date(from: "2025/10/08")
-        
-        
-               // Инициализация ViewModel с тестовыми данными
-               let testOrder = Order(
-                   screenTitle: "Оформление заказа",
-                   promocodes: [
-                       Order.Promocode(title: "HELLO35334534535354535345354апвпвапапвапапаваВАППВАПВПВПВПВАПВАПВПВПВАПВПАВПАВппавпвd", percent: 5, endDate: someDateTime, info: "Первый заказ", active: false),
-                       Order.Promocode(title: "SPRING2мсмссмвавававerttretertet43", percent: 10, endDate: nil, info: "Весенняя акция", active: false),
-                       Order.Promocode(title: "SPRING2мсмссмвавававerttretertet", percent: 11, endDate: nil, info: "Весенняя акция", active: false),
-                       Order.Promocode(title: "SPRING3", percent: 12, endDate: nil, info: "Весенняя акция", active: false),
-                       Order.Promocode(title: "SPRINg4", percent: 14, endDate: nil, info: "Весенняя акция", active: false),
-                       Order.Promocode(title: "SPRING5", percent: 16, endDate: nil, info: "Весенняя акция", active: false),
-                       Order.Promocode(title: "SPRING6", percent: 1, endDate: nil, info: "Весенняя акция", active: false)
-                       
-                   ],
-                   availableForActive: [
-                       .init(title: "123", percent: 12, endDate: Date(), info: "Секретный промокод", active: true),
-                       .init(title: "10", percent: 10, endDate: Date(), info: "Секретный промокод", active: true),
-                       .init(title: "5", percent: 5, endDate: Date(), info: "Секретный промокод", active: true),
-                       .init(title: "TEST", percent: 999, endDate: Date(), info: "Секретный промокод", active: true),
-                       .init(title: "FO", percent: 1, endDate: Date(), info: "Секретный промокод", active: true),
-                       .init(title: "FA", percent: 2, endDate: Date(), info: "Секретный промокод", active: true),
-                       .init(title: "FU", percent: 3, endDate: Date(), info: "Секретный промокод", active: true)
-                   ],
-                   products: [
-                       Order.Product(price: 10000, title: "Продукт 1"),
-                       Order.Product(price: 15000, title: "Продукт 2")
-                   ],
-                   paymentDiscount: 0,
-                   baseDiscount: 0
-               )
-
-        let viewModel = OrderViewModel(orderList: testOrder)
-
-               // Инициализация контроллера с ViewModel
-        let orderViewController = OrderViewController(viewModel: viewModel)
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy/MM/dd"
+//        let someDateTime = formatter.date(from: "2025/10/08")
+//        
+//        
+//               // Инициализация ViewModel с тестовыми данными
+//               let testOrder = Order(
+//                   screenTitle: "Оформление заказа",
+//                   promocodes: [
+//                       Order.Promocode(title: "HELLO35334534535354535345354апвпвапапвапапаваВАППВАПВПВПВПВАПВАПВПВПВАПВПАВПАВппавпвd", percent: 5, endDate: someDateTime, info: "Первый заказ", active: false),
+//                       Order.Promocode(title: "SPRING2мсмссмвавававerttretertet43", percent: 10, endDate: nil, info: "Весенняя акция", active: false),
+//                       Order.Promocode(title: "SPRING2мсмссмвавававerttretertet", percent: 11, endDate: nil, info: "Весенняя акция", active: false),
+//                       Order.Promocode(title: "SPRING3", percent: 12, endDate: nil, info: "Весенняя акция", active: false),
+//                       Order.Promocode(title: "SPRINg4", percent: 14, endDate: nil, info: "Весенняя акция", active: false),
+//                       Order.Promocode(title: "SPRING5", percent: 16, endDate: nil, info: "Весенняя акция", active: false),
+//                       Order.Promocode(title: "SPRING6", percent: 1, endDate: nil, info: "Весенняя акция", active: false)
+//                       
+//                   ],
+//                   availableForActive: [
+//                       .init(title: "123", percent: 12, endDate: Date(), info: "Секретный промокод", active: true),
+//                       .init(title: "10", percent: 10, endDate: Date(), info: "Секретный промокод", active: true),
+//                       .init(title: "5", percent: 5, endDate: Date(), info: "Секретный промокод", active: true),
+//                       .init(title: "TEST", percent: 999, endDate: Date(), info: "Секретный промокод", active: true),
+//                       .init(title: "FO", percent: 1, endDate: Date(), info: "Секретный промокод", active: true),
+//                       .init(title: "FA", percent: 2, endDate: Date(), info: "Секретный промокод", active: true),
+//                       .init(title: "FU", percent: 3, endDate: Date(), info: "Секретный промокод", active: true)
+//                   ],
+//                   products: [
+//                       Order.Product(price: 10000, title: "Продукт 1"),
+//                       Order.Product(price: 15000, title: "Продукт 2")
+//                   ],
+//                   paymentDiscount: 0,
+//                   baseDiscount: 0
+//               )
+//
+//        let viewModel = OrderViewModel(orderList: testOrder)
+//
+//               // Инициализация контроллера с ViewModel
+//        let orderViewController = OrderViewController(viewModel: viewModel)
 //               orderViewController.viewModel = viewModel
-
+//
+                let productListViewController = ProductListViewController()
                // Инициализация окна
                window = UIWindow(windowScene: windowScene)
-               window?.rootViewController = UINavigationController(rootViewController: orderViewController) // Если нужен UINavigationController
+               window?.rootViewController = UINavigationController(rootViewController: productListViewController)
                window?.makeKeyAndVisible()
+       
+        
            }
 
     func sceneDidDisconnect(_ scene: UIScene) {
