@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TextFieldCell: UITableViewCell {
+class TextFieldCell: UITableViewCell, UITextFieldDelegate {
     
     private let containerView: UIView = {
         let view = UIView()
@@ -27,7 +27,8 @@ class TextFieldCell: UITableViewCell {
     }()
     
     private var onTextChanged: ((String) -> Void)?
-    
+    private var nextResponderAction: (() -> Void)?
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -43,7 +44,6 @@ class TextFieldCell: UITableViewCell {
         contentView.addSubview(containerView)
         containerView.addSubview(textField)
         
-        // Constraints for containerView
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -52,7 +52,6 @@ class TextFieldCell: UITableViewCell {
             containerView.heightAnchor.constraint(equalToConstant: 56)
         ])
         
-        // Constraints for textField inside containerView
         NSLayoutConstraint.activate([
             textField.topAnchor.constraint(equalTo: containerView.topAnchor),
             textField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
@@ -61,13 +60,25 @@ class TextFieldCell: UITableViewCell {
         ])
     }
     
-    func configure(placeholder: String, text: String, onTextChanged: @escaping (String) -> Void) {
+    func configure(placeholder: String, text: String, returnKeyType: UIReturnKeyType, onTextChanged: @escaping (String) -> Void, nextResponderAction: (() -> Void)? = nil) {
         textField.placeholder = placeholder
         textField.text = text
+        textField.returnKeyType = returnKeyType
+        textField.delegate = self
         self.onTextChanged = onTextChanged
+        self.nextResponderAction = nextResponderAction
     }
     
     @objc private func textChanged() {
         onTextChanged?(textField.text ?? "")
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let nextAction = nextResponderAction {
+            nextAction()
+        } else {
+            textField.resignFirstResponder()
+        }
+        return true
     }
 }

@@ -82,4 +82,6 @@ class PhotoCollectionCell: UITableViewCell {
             subtitleLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor)
         ])
     }
+    
+    
 }

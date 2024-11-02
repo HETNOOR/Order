@@ -19,11 +19,15 @@ class ReviewViewController: UIViewController {
         tableView.register(RatingCell.self, forCellReuseIdentifier: "RatingCell")
         tableView.register(PhotoCollectionCell.self, forCellReuseIdentifier: "PhotoCollectionCell")
         tableView.register(TextFieldCell.self, forCellReuseIdentifier: "TextFieldCell")
-        tableView.register(SubmitReviewCell.self, forCellReuseIdentifier: "SubmitReviewCell") 
+        tableView.register(SubmitReviewCell.self, forCellReuseIdentifier: "SubmitReviewCell")
+        tableView.keyboardDismissMode = .onDrag
         return tableView
     }()
 
-    
+    private var prosTextField: UITextField?
+    private var consTextField: UITextField?
+    private var commentTextField: UITextField?
+
     init(viewModel: ReviewViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -36,7 +40,18 @@ class ReviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        
+        // Добавляем наблюдателей за появлением и скрытием клавиатуры
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
+
+    deinit {
+        // Удаляем наблюдателей при деинициализации
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
 
     private func setupUI() {
         title = "Напишите отзыв"
@@ -52,17 +67,24 @@ class ReviewViewController: UIViewController {
         ])
     }
 
-    private func addPhoto() {
-        // Логика добавления фото
-    }
-
-    private func deletePhoto(at index: Int) {
-//        viewModel.photos.remove(at: index)
-        tableView.reloadSections(IndexSet(integer: 2), with: .automatic)
-    }
-
     private func submitReview() {
         viewModel.submitReview()
+    }
+    
+    // MARK: - Keyboard Handling
+
+    @objc private func keyboardWillShow(notification: Notification) {
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            let keyboardHeight = keyboardFrame.height
+            tableView.contentInset.bottom = keyboardHeight
+            tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
+        }
+    }
+
+    @objc private func keyboardWillHide(notification: Notification) {
+  
+        tableView.contentInset.bottom = 0
+        tableView.verticalScrollIndicatorInsets.bottom = 0
     }
 }
 
@@ -70,14 +92,11 @@ class ReviewViewController: UIViewController {
 
 extension ReviewViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 7 // 1 - Product Info, 2 - Rating, 3 - Photos, 4 - Pros/Cons/Comment, 5 - Submit Button
+        return 7
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-     
-
-            return 1
-  
+        return 1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -90,7 +109,6 @@ extension ReviewViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "RatingCell", for: indexPath) as! RatingCell
             cell.configure(rating: viewModel.review.rating) { [weak self] rating in
                 // self?.viewModel.setRating(rating)
-                // self?.tableView.reloadData()
             }
             return cell
         case 2:
@@ -98,21 +116,28 @@ extension ReviewViewController: UITableViewDataSource {
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
-            cell.configure(placeholder: "Достоинства", text: viewModel.review.pros) { [weak self] text in
+            cell.configure(placeholder: "Достоинства", text: viewModel.review.pros, returnKeyType: .next, onTextChanged: { [weak self] text in
                 self?.viewModel.review.pros = text
-            }
+            }, nextResponderAction: { [weak self] in
+                self?.consTextField?.becomeFirstResponder()
+            })
+            prosTextField = cell.textField
             return cell
         case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
-            cell.configure(placeholder: "Недостатки", text: viewModel.review.cons) { [weak self] text in
+            cell.configure(placeholder: "Недостатки", text: viewModel.review.cons, returnKeyType: .next, onTextChanged: { [weak self] text in
                 self?.viewModel.review.cons = text
-            }
+            }, nextResponderAction: { [weak self] in
+                self?.commentTextField?.becomeFirstResponder()
+            })
+            consTextField = cell.textField
             return cell
         case 5:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
-            cell.configure(placeholder: "Комментарий", text: viewModel.review.comment) { [weak self] text in
+            cell.configure(placeholder: "Комментарий", text: viewModel.review.comment, returnKeyType: .done, onTextChanged: { [weak self] text in
                 self?.viewModel.review.comment = text
-            }
+            })
+            commentTextField = cell.textField
             return cell
         case 6:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SubmitReviewCell", for: indexPath) as! SubmitReviewCell
@@ -127,11 +152,13 @@ extension ReviewViewController: UITableViewDataSource {
 
 extension ReviewViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 4 {
+        if indexPath.section == 6 {
             submitReview()
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
+
+
     
     
     
@@ -191,16 +218,6 @@ extension ReviewViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
 
-extension ReviewViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item == viewModel.review.photos.count {
-            addPhoto()
-        } else {
-            deletePhoto(at: indexPath.item)
-        }
-    }
-}
 
 

@@ -11,24 +11,40 @@ class ReviewViewModel {
     var product: Product
     var review: Review
     
-    // Observable properties
-    var ratingText: ((String) -> Void)?
-    var photosUpdated: (() -> Void)?
+    var onPhotosUpdated: (() -> Void)?
+    
+    private var availableImages: [UIImage] = [
+        UIImage(named: "image1")!,
+        UIImage(named: "image2")!,
+        UIImage(named: "image3")!,
+        UIImage(named: "image4")!,
+        UIImage(named: "image5")!,
+        UIImage(named: "image6")!,
+        UIImage(named: "image7")!
+    ]
     
     init(product: Product) {
         self.product = product
         self.review = Review()
     }
     
-    func addPhoto(_ photo: UIImage) {
-        guard review.photos.count < 7 else { return }
-        review.photos.append(photo)
-        photosUpdated?()
+    func addPhoto() {
+        guard !availableImages.isEmpty else {
+            print("No more available images to add.")
+            return
+        }
+        let nextImage = availableImages.removeFirst()
+        review.photos.append(nextImage)
+        print("Photo added. Total photos:", review.photos.count)
+        onPhotosUpdated?()
     }
+
     
-    func removePhoto(at index: Int) {
-        review.photos.remove(at: index)
-        photosUpdated?()
+    func deletePhoto(at index: Int) {
+        if index >= 0 && index < review.photos.count {
+            review.photos.remove(at: index)
+            onPhotosUpdated?()
+        }
     }
     
     func submitReview() {
