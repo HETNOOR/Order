@@ -15,7 +15,6 @@ class SubmitReviewCell: UITableViewCell {
         button.setImage(UIImage(systemName: "square"), for: .normal)
         button.setImage(UIImage(systemName: "checkmark.square.fill"), for: .selected)
         button.tintColor = #colorLiteral(red: 0.9987934232, green: 0.2710070908, blue: 0.07490523905, alpha: 1)
-//        button.addTarget(SubmitReviewCell.self, action: #selector(toggleCheckbox), for: .touchUpInside)
         return button
     }()
     
@@ -73,11 +72,14 @@ class SubmitReviewCell: UITableViewCell {
         contentView.addSubview(submitButton)
         contentView.addSubview(disclaimerLabel)
         
+        // Добавляем целевое действие после инициализации кнопки
+        anonymousReviewCheckbox.addTarget(self, action: #selector(toggleCheckbox), for: .touchUpInside)
+        
         anonymousReviewCheckbox.translatesAutoresizingMaskIntoConstraints = false
         anonymousLabel.translatesAutoresizingMaskIntoConstraints = false
         
+        // Настройка ограничений
         NSLayoutConstraint.activate([
-           
             anonymousReviewCheckbox.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             anonymousReviewCheckbox.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 28),
             anonymousReviewCheckbox.widthAnchor.constraint(equalToConstant: 24),
@@ -86,20 +88,18 @@ class SubmitReviewCell: UITableViewCell {
             anonymousLabel.centerYAnchor.constraint(equalTo: anonymousReviewCheckbox.centerYAnchor),
             anonymousLabel.leadingAnchor.constraint(equalTo: anonymousReviewCheckbox.trailingAnchor, constant: 8),
             
-         
             submitButton.topAnchor.constraint(equalTo: anonymousReviewCheckbox.bottomAnchor, constant: 16),
             submitButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             submitButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             submitButton.heightAnchor.constraint(equalToConstant: 54),
             
-          
             disclaimerLabel.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: 8),
             disclaimerLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             disclaimerLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             disclaimerLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-    
+
     @objc private func toggleCheckbox() {
         anonymousReviewCheckbox.isSelected.toggle()
     }
