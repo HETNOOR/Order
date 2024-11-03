@@ -113,6 +113,8 @@ extension ReviewViewController: UITableViewDataSource {
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "PhotoCollectionCell", for: indexPath) as! PhotoCollectionCell
+            cell.tableView = tableView
+            cell.viewModel = viewModel
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell

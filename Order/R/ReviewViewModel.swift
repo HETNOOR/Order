@@ -13,6 +13,7 @@ class ReviewViewModel {
     
     var onPhotosUpdated: (() -> Void)?
     
+    // Массив доступных изображений
     private var availableImages: [UIImage] = [
         UIImage(named: "image1")!,
         UIImage(named: "image2")!,
@@ -22,7 +23,12 @@ class ReviewViewModel {
         UIImage(named: "image6")!,
         UIImage(named: "image7")!
     ]
-    
+
+    // Массив с добавленными изображениями
+    var addedPhotos: [UIImage] {
+        return review.photos
+    }
+
     init(product: Product) {
         self.product = product
         self.review = Review()
@@ -33,16 +39,20 @@ class ReviewViewModel {
             print("No more available images to add.")
             return
         }
+
+      
         let nextImage = availableImages.removeFirst()
         review.photos.append(nextImage)
         print("Photo added. Total photos:", review.photos.count)
-        onPhotosUpdated?()
     }
-
     
     func deletePhoto(at index: Int) {
         if index >= 0 && index < review.photos.count {
-            review.photos.remove(at: index)
+            let removedPhoto = review.photos.remove(at: index)
+            
+
+            availableImages.insert(removedPhoto, at: 0)
+            print("Photo deleted. Total photos:", review.photos.count)
             onPhotosUpdated?()
         }
     }
@@ -51,3 +61,4 @@ class ReviewViewModel {
         // Обработка отправки отзыва
     }
 }
+
