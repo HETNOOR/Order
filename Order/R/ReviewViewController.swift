@@ -23,14 +23,31 @@ class ReviewViewController: UIViewController {
         tableView.keyboardDismissMode = .onDrag
         return tableView
     }()
-
-    private var prosTextField: UITextField?
-    private var consTextField: UITextField?
-    private var commentTextField: UITextField?
-
+    
+    // Массив моделей для текстовых полей
+    var textFieldViewModels: [TextFieldViewModel]!
+    
     init(viewModel: ReviewViewModel) {
         self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
+        
+        // Инициализация массива ViewModel для текстовых полей
+        super.init(nibName: nil, bundle: nil)  // Важно вызвать super.init() первым
+
+        self.textFieldViewModels = [
+            TextFieldViewModel(placeholder: "Достоинства", text: viewModel.review.pros, returnKeyType: .next, action: .next, didChangeText: { [weak self] text in
+                self?.viewModel.review.pros = text
+            }, nextResponderAction: { [weak self] in
+                self?.focusOnNextTextField(at: 1)
+            }),
+            TextFieldViewModel(placeholder: "Недостатки", text: viewModel.review.cons, returnKeyType: .next, action: .next, didChangeText: { [weak self] text in
+                self?.viewModel.review.cons = text
+            }, nextResponderAction: { [weak self] in
+                self?.focusOnNextTextField(at: 2)
+            }),
+            TextFieldViewModel(placeholder: "Комментарий", text: viewModel.review.comment, returnKeyType: .done, action: .done, didChangeText: { [weak self] text in
+                self?.viewModel.review.comment = text
+            })
+        ]
     }
 
     required init?(coder: NSCoder) {
@@ -41,17 +58,7 @@ class ReviewViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         
-        // Добавляем наблюдателей за появлением и скрытием клавиатуры
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
-    deinit {
-        // Удаляем наблюдателей при деинициализации
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
 
     private func setupUI() {
         title = "Напишите отзыв"
@@ -70,21 +77,15 @@ class ReviewViewController: UIViewController {
     private func submitReview() {
         viewModel.submitReview()
     }
-    
-    // MARK: - Keyboard Handling
 
-    @objc private func keyboardWillShow(notification: Notification) {
-        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-            let keyboardHeight = keyboardFrame.height
-            tableView.contentInset.bottom = keyboardHeight
-            tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
+    // Переход к следующему текстовому полю
+    private func focusOnNextTextField(at index: Int) {
+        if index < textFieldViewModels.count {
+            let indexPath = IndexPath(row: 0, section: index + 3)  // Смещение на 3, так как первые три секции не имеют текстовых полей
+            if let cell = tableView.cellForRow(at: indexPath) as? TextFieldCell {
+                cell.textField.becomeFirstResponder()
+            }
         }
-    }
-
-    @objc private func keyboardWillHide(notification: Notification) {
-  
-        tableView.contentInset.bottom = 0
-        tableView.verticalScrollIndicatorInsets.bottom = 0
     }
 }
 
@@ -92,61 +93,45 @@ class ReviewViewController: UIViewController {
 
 extension ReviewViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 7
+        return 7  // Всего 7 секций
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 1  // Каждая секция содержит одну строку
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell
+        
         switch indexPath.section {
         case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ProductCell", for: indexPath) as! ProductCell
-            cell.configure(productName: viewModel.product.name, productImage: viewModel.product.image, size: viewModel.product.size)
-            return cell
+            let productCell = tableView.dequeueReusableCell(withIdentifier: "ProductCell", for: indexPath) as! ProductCell
+            productCell.configure(with: viewModel.product)
+            cell = productCell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "RatingCell", for: indexPath) as! RatingCell
-            cell.configure(rating: viewModel.review.rating) { [weak self] rating in
-                // self?.viewModel.setRating(rating)
+            let ratingCell = tableView.dequeueReusableCell(withIdentifier: "RatingCell", for: indexPath) as! RatingCell
+            ratingCell.configure(rating: viewModel.review.rating) { [weak self] rating in
+                // Обработка изменений рейтинга
             }
-            return cell
+            cell = ratingCell
         case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PhotoCollectionCell", for: indexPath) as! PhotoCollectionCell
-            cell.tableView = tableView
-            cell.viewModel = viewModel
-            return cell
-        case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
-            cell.configure(placeholder: "Достоинства", text: viewModel.review.pros, returnKeyType: .next, onTextChanged: { [weak self] text in
-                self?.viewModel.review.pros = text
-            }, nextResponderAction: { [weak self] in
-                self?.consTextField?.becomeFirstResponder()
-            })
-            prosTextField = cell.textField
-            return cell
-        case 4:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
-            cell.configure(placeholder: "Недостатки", text: viewModel.review.cons, returnKeyType: .next, onTextChanged: { [weak self] text in
-                self?.viewModel.review.cons = text
-            }, nextResponderAction: { [weak self] in
-                self?.commentTextField?.becomeFirstResponder()
-            })
-            consTextField = cell.textField
-            return cell
-        case 5:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
-            cell.configure(placeholder: "Комментарий", text: viewModel.review.comment, returnKeyType: .done, onTextChanged: { [weak self] text in
-                self?.viewModel.review.comment = text
-            })
-            commentTextField = cell.textField
-            return cell
+            let photoCollectionCell = tableView.dequeueReusableCell(withIdentifier: "PhotoCollectionCell", for: indexPath) as! PhotoCollectionCell
+            photoCollectionCell.viewModel = viewModel
+            cell = photoCollectionCell
+        case 3...5:
+            let textFieldCell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath) as! TextFieldCell
+            let textFieldViewModel = textFieldViewModels[indexPath.section - 3]  // Смещение индекса для правильного обращения к ViewModel
+            textFieldCell.configure(with: textFieldViewModel)
+            cell = textFieldCell
         case 6:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SubmitReviewCell", for: indexPath) as! SubmitReviewCell
-            return cell
+            let submitReviewCell = tableView.dequeueReusableCell(withIdentifier: "SubmitReviewCell", for: indexPath) as! SubmitReviewCell
+            cell = submitReviewCell
         default:
-            return UITableViewCell()
+            cell = UITableViewCell()
         }
+
+        cell.selectionStyle = .none
+        return cell
     }
 }
 
@@ -160,34 +145,29 @@ extension ReviewViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-
-    
-    
-    
     // Задает отступ сверху для каждой секции
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 16 // Установите нужный отступ
+        return 16
     }
     
     // Задает отступ снизу для каждой секции
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0 // Установите нужный отступ
+        return 0
     }
     
-    // Задает кастомное отображение для хедера (позволяет тонко настроить отступы)
+    // Кастомное отображение хедера
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView()
-        headerView.backgroundColor = .clear // или другой цвет для хедера
+        headerView.backgroundColor = .clear
         return headerView
     }
     
-    // Задает кастомное отображение для футера
+    // Кастомное отображение футера
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footerView = UIView()
-        footerView.backgroundColor = .clear // или другой цвет для футера
+        footerView.backgroundColor = .clear
         return footerView
     }
-
 }
 
 // MARK: - UITextFieldDelegate
@@ -210,7 +190,6 @@ extension ReviewViewController: UICollectionViewDataSource {
         if indexPath.item == viewModel.review.photos.count {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddPhotoCell", for: indexPath)
             cell.contentView.backgroundColor = .lightGray
-            // добавить иконку "плюс"
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath)
@@ -219,7 +198,4 @@ extension ReviewViewController: UICollectionViewDataSource {
         }
     }
 }
-
-
-
 

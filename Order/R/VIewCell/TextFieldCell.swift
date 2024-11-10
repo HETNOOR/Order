@@ -60,13 +60,13 @@ class TextFieldCell: UITableViewCell, UITextFieldDelegate {
         ])
     }
     
-    func configure(placeholder: String, text: String, returnKeyType: UIReturnKeyType, onTextChanged: @escaping (String) -> Void, nextResponderAction: (() -> Void)? = nil) {
-        textField.placeholder = placeholder
-        textField.text = text
-        textField.returnKeyType = returnKeyType
+    func configure(with viewModel: TextFieldViewModel) {
+        textField.placeholder = viewModel.placeholder
+        textField.text = viewModel.text
+        textField.returnKeyType = viewModel.returnKeyType
         textField.delegate = self
-        self.onTextChanged = onTextChanged
-        self.nextResponderAction = nextResponderAction
+        self.onTextChanged = viewModel.didChangeText
+        self.nextResponderAction = viewModel.nextResponderAction
     }
     
     @objc private func textChanged() {

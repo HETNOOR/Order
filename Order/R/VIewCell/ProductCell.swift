@@ -9,8 +9,9 @@ import UIKit
 
 class ProductCell: UITableViewCell {
     
+    // MARK: - UI Components
     
-    let productNameLabel: UILabel = {
+    private lazy var productNameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 0
@@ -18,8 +19,7 @@ class ProductCell: UITableViewCell {
         return label
     }()
     
-    
-    let sizeLabel: UILabel = {
+    private lazy var sizeLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.textColor = .gray
@@ -27,13 +27,15 @@ class ProductCell: UITableViewCell {
         return label
     }()
     
-    let productImageView: UIImageView = {
+    private lazy var productImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
+    // MARK: - Initializers
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -44,12 +46,13 @@ class ProductCell: UITableViewCell {
         setupViews()
     }
     
+    // MARK: - Setup UI
+
     private func setupViews() {
         contentView.addSubview(productImageView)
         contentView.addSubview(productNameLabel)
         contentView.addSubview(sizeLabel)
         
-        // Set up constraints
         NSLayoutConstraint.activate([
             productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             productImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -62,14 +65,16 @@ class ProductCell: UITableViewCell {
             
             sizeLabel.leadingAnchor.constraint(equalTo: productNameLabel.leadingAnchor),
             sizeLabel.trailingAnchor.constraint(equalTo: productNameLabel.trailingAnchor),
-            sizeLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor,  constant: 5),
+            sizeLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor, constant: 5),
             sizeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -9)
         ])
     }
     
-    func configure(productName: String, productImage: UIImage?, size: Int) {
-        productNameLabel.text = productName
-        productImageView.image = productImage
-        sizeLabel.text = "Размер: \(size)"
+    // MARK: - Configuration
+    
+    func configure(with product: Product) {
+        productNameLabel.text = product.name
+        productImageView.image = product.image
+        sizeLabel.text = "Размер: \(product.size)"
     }
 }

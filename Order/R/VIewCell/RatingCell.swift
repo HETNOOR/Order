@@ -9,7 +9,9 @@ import UIKit
 
 class RatingCell: UITableViewCell {
     
-    private let containerView: UIView = {
+    // MARK: - UI Components
+    
+    private lazy var containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 12
         view.layer.masksToBounds = true
@@ -18,23 +20,25 @@ class RatingCell: UITableViewCell {
         return view
     }()
     
-    private var starsStackView: UIStackView = {
+    private lazy var starsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 4
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
+    }()
+    
+    private lazy var ratingLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .darkGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     private var ratingButtons: [UIButton] = []
     
-    private var ratingLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .darkGray
-        return label
-    }()
-    
-    var onRatingChanged: ((Int) -> Void)?
+    // MARK: - Properties
     
     private var currentRating: Int = 0 {
         didSet {
@@ -43,6 +47,10 @@ class RatingCell: UITableViewCell {
             onRatingChanged?(currentRating)
         }
     }
+    
+    var onRatingChanged: ((Int) -> Void)?
+    
+    // MARK: - Initializers
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -53,17 +61,14 @@ class RatingCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup UI
+    
     private func setupUI() {
         contentView.addSubview(containerView)
         containerView.addSubview(ratingLabel)
         containerView.addSubview(starsStackView)
         
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        ratingLabel.translatesAutoresizingMaskIntoConstraints = false
-        starsStackView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
-            // Установка отступов для containerView
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -73,10 +78,10 @@ class RatingCell: UITableViewCell {
             ratingLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             ratingLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             
-            starsStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
-            starsStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8),
             starsStackView.leadingAnchor.constraint(equalTo: ratingLabel.trailingAnchor, constant: 16),
-            starsStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16)
+            starsStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            starsStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            starsStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8)
         ])
         
         for i in 1...5 {
@@ -94,14 +99,20 @@ class RatingCell: UITableViewCell {
         updateRatingLabel()
     }
     
+    // MARK: - Configuration
+    
     func configure(rating: Int, onRatingChanged: @escaping (Int) -> Void) {
         self.currentRating = rating
         self.onRatingChanged = onRatingChanged
     }
     
+    // MARK: - Actions
+    
     @objc private func starTapped(_ sender: UIButton) {
         currentRating = sender.tag
     }
+    
+    // MARK: - Helpers
     
     private func updateStars() {
         for button in ratingButtons {
