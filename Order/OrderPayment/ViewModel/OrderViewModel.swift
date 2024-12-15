@@ -272,7 +272,7 @@ final class OrderViewModel {
                 let totalPriceOutput = totalPrice
                 
                 let baseDiscount = orderList.baseDiscount ?? 0
-                let paymentDiscount = orderList.paymentDiscount ?? 0
+                let paymentDiscount = orderList.pDiscount ?? 0
                 totalPrice -= baseDiscount
                 totalPrice -= paymentDiscount
                 
@@ -314,7 +314,7 @@ final class OrderViewModel {
         let totalPriceOutput = totalPrice
 
         let baseDiscount = orderList.baseDiscount ?? 0
-        let paymentDiscount = orderList.paymentDiscount ?? 0
+        let paymentDiscount = orderList.pDiscount ?? 0
         totalPrice -= baseDiscount
         totalPrice -= paymentDiscount
 
@@ -332,7 +332,7 @@ final class OrderViewModel {
             promoCodeTitle: "Промокоды",
             promoCodePrice: promoCodePrice.formatPrice(),
             paymentMethodTitle: "Способы оплаты",
-            paymentMethodPrice: orderList.paymentDiscount?.formatPrice() ?? "0 ₽",
+            paymentMethodPrice: orderList.pDiscount?.formatPrice() ?? "0 ₽",
             resultTitle: "Итого",
             resultPrice: totalPrice.formatPriceWithoutDegree(),
             nextButtonTitle: "Оформить заказ",
